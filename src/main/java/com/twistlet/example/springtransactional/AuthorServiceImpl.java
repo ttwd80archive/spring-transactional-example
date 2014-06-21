@@ -2,6 +2,8 @@ package com.twistlet.example.springtransactional;
 
 import static org.springframework.transaction.annotation.Propagation.*;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -87,45 +89,95 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	@Transactional(propagation = REQUIRES_NEW)
-	public void insertRequiredInsideTransaction(final String[] group1,
-			final String[] group2, final String[] group3)
+	public void insertRequiredInsideTransactionWithCatch(final String[] group1,
+			final String[] group2, final String[] group3,
+			final List<String> list)
 
 	{
+		list.add("1");
 		insertMultipleAuthor(group1);
 		try {
+			list.add("2");
 			bookService.insertRequired(group2);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+		list.add("3");
 		insertMultipleShop(group3);
 
 	}
 
 	@Override
 	@Transactional(propagation = REQUIRES_NEW)
-	public void insertRequiresNewInsideTransaction(final String[] group1,
-			final String[] group2, final String[] group3) {
+	public void insertRequiresNewInsideTransactionWithCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
 		insertMultipleAuthor(group1);
 		try {
+			list.add("2");
 			bookService.insertRequiresNew(group2);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertNestedInsideTransactionWithCatch(final String[] group1,
+			final String[] group2, final String[] group3,
+			final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		try {
+			list.add("2");
+			bookService.insertNested(group2);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertRequiredInsideTransactionWithoutCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		list.add("2");
+		bookService.insertRequired(group2);
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertRequiresNewInsideTransactionWithoutCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		list.add("2");
+		bookService.insertRequiresNew(group2);
+		list.add("3");
 		insertMultipleShop(group3);
 
 	}
 
 	@Override
 	@Transactional(propagation = REQUIRES_NEW)
-	public void insertNestedInsideTransaction(final String[] group1,
-			final String[] group2, final String[] group3) {
+	public void insertNestedInsideTransactionWithoutCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
 		insertMultipleAuthor(group1);
-		try {
-			bookService.insertNested(group2);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		list.add("2");
+		bookService.insertNested(group2);
+		list.add("3");
 		insertMultipleShop(group3);
 	}
 
@@ -152,5 +204,4 @@ public class AuthorServiceImpl implements AuthorService {
 	public Long countShops() {
 		return shopDao.count();
 	}
-
 }

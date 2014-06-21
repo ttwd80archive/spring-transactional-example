@@ -1,5 +1,7 @@
 package com.twistlet.example.springtransactional;
 
+import java.util.List;
+
 public interface AuthorService {
 
 	void clean();
@@ -24,14 +26,23 @@ public interface AuthorService {
 
 	void insertMultipleNever(String... items);
 
-	void insertRequiredInsideTransaction(String[] group1, String[] group2,
-			String[] group3);
+	void insertRequiredInsideTransactionWithCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
 
-	void insertRequiresNewInsideTransaction(String[] group1, String[] group2,
-			String[] group3);
+	void insertRequiresNewInsideTransactionWithCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
 
-	void insertNestedInsideTransaction(String[] group1, String[] group2,
-			String[] group3);
+	void insertNestedInsideTransactionWithCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertRequiredInsideTransactionWithoutCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertRequiresNewInsideTransactionWithoutCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertNestedInsideTransactionWithoutCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
 
 	Long countShops();
 
