@@ -44,6 +44,25 @@ public interface AuthorService {
 	void insertNestedInsideTransactionWithoutCatch(String[] group1,
 			String[] group2, String[] group3, List<String> list);
 
+	// SUPPORTS, NOT_SUPPORTED, NEVER
+	void insertSupportsInsideTransactionWithCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertSupportsInsideTransactionWithoutCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertNotSupportedInsideTransactionWithCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertNotSupportedInsideTransactionWithoutCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertNeverInsideTransactionWithCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
+	void insertNeverInsideTransactionWithoutCatch(String[] group1,
+			String[] group2, String[] group3, List<String> list);
+
 	Long countShops();
 
 }

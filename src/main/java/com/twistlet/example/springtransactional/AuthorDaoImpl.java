@@ -16,14 +16,8 @@ public class AuthorDaoImpl implements AuthorDao {
 	}
 
 	@Override
-	public void insertOk(final String title) {
+	public void insert(final String title) {
 		final String sql = "insert into author (name) values (?)";
-		jdbcOperations.update(sql, title);
-	}
-
-	@Override
-	public void insertBad(final String title) {
-		final String sql = "insert into author (xname) values (?)";
 		jdbcOperations.update(sql, title);
 	}
 

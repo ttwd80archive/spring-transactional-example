@@ -42,7 +42,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void insert(final String value) {
-		authorDao.insertOk(value);
+		authorDao.insert(value);
 	}
 
 	@Override
@@ -181,9 +181,101 @@ public class AuthorServiceImpl implements AuthorService {
 		insertMultipleShop(group3);
 	}
 
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertSupportsInsideTransactionWithCatch(final String[] group1,
+			final String[] group2, final String[] group3,
+			final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		try {
+			list.add("2");
+			bookService.insertSupports(group2);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertSupportsInsideTransactionWithoutCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		list.add("2");
+		bookService.insertSupports(group2);
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertNotSupportedInsideTransactionWithCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		try {
+			list.add("2");
+			bookService.insertNotSupported(group2);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		list.add("3");
+		insertMultipleShop(group3);
+
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertNotSupportedInsideTransactionWithoutCatch(
+			final String[] group1, final String[] group2,
+			final String[] group3, final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		list.add("2");
+		bookService.insertNotSupported(group2);
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertNeverInsideTransactionWithCatch(final String[] group1,
+			final String[] group2, final String[] group3,
+			final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		try {
+			list.add("2");
+			bookService.insertNever(group2);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		list.add("3");
+		insertMultipleShop(group3);
+	}
+
+	@Override
+	@Transactional(propagation = REQUIRES_NEW)
+	public void insertNeverInsideTransactionWithoutCatch(final String[] group1,
+			final String[] group2, final String[] group3,
+			final List<String> list) {
+		list.add("1");
+		insertMultipleAuthor(group1);
+		list.add("2");
+		bookService.insertNever(group2);
+		list.add("3");
+		insertMultipleShop(group3);
+
+	}
+
 	private void insertMultipleAuthor(final String... items) {
 		for (final String item : items) {
-			authorDao.insertOk(item);
+			authorDao.insert(item);
 		}
 	}
 
@@ -204,4 +296,5 @@ public class AuthorServiceImpl implements AuthorService {
 	public Long countShops() {
 		return shopDao.count();
 	}
+
 }

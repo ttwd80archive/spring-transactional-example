@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration("classpath:application-context.xml")
-public class MultipleTransactionWithoutCatchITCase extends
+public class TransactionIndependentWithCatchITCase extends
 		AbstractJUnit4SpringContextTests {
 
 	@Resource
@@ -33,7 +33,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiredInsideTransactionWithoutCatch(group1,
+			authorService.insertRequiredInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -52,7 +52,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiredInsideTransactionWithoutCatch(group1,
+			authorService.insertRequiredInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -71,7 +71,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiredInsideTransactionWithoutCatch(group1,
+			authorService.insertRequiredInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -79,8 +79,8 @@ public class MultipleTransactionWithoutCatchITCase extends
 		assertThat(authorService.count(), equalTo(0L));
 		assertThat(authorService.countBooks(), equalTo(0L));
 		assertThat(authorService.countShops(), equalTo(0L));
-		assertThat(list.size(), equalTo(2));
-		assertThat(list, equalTo(Arrays.asList("1", "2")));
+		assertThat(list.size(), equalTo(3));
+		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "TOO_LONG_TO_FIT" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiredInsideTransactionWithoutCatch(group1,
+			authorService.insertRequiredInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -109,8 +109,8 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiresNewInsideTransactionWithoutCatch(
-					group1, group2, group3, list);
+			authorService.insertRequiresNewInsideTransactionWithCatch(group1,
+					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -128,8 +128,8 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiresNewInsideTransactionWithoutCatch(
-					group1, group2, group3, list);
+			authorService.insertRequiresNewInsideTransactionWithCatch(group1,
+					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -147,16 +147,16 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiresNewInsideTransactionWithoutCatch(
-					group1, group2, group3, list);
+			authorService.insertRequiresNewInsideTransactionWithCatch(group1,
+					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		assertThat(authorService.count(), equalTo(0L));
+		assertThat(authorService.count(), equalTo(2L));
 		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-		assertThat(list.size(), equalTo(2));
-		assertThat(list, equalTo(Arrays.asList("1", "2")));
+		assertThat(authorService.countShops(), equalTo(4L));
+		assertThat(list.size(), equalTo(3));
+		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
 	}
 
 	@Test
@@ -166,8 +166,8 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "TOO_LONG_TO_FIT" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertRequiresNewInsideTransactionWithoutCatch(
-					group1, group2, group3, list);
+			authorService.insertRequiresNewInsideTransactionWithCatch(group1,
+					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -186,7 +186,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertNestedInsideTransactionWithoutCatch(group1,
+			authorService.insertNestedInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -205,7 +205,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertNestedInsideTransactionWithoutCatch(group1,
+			authorService.insertNestedInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -224,16 +224,16 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "D4" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertNestedInsideTransactionWithoutCatch(group1,
+			authorService.insertNestedInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		assertThat(authorService.count(), equalTo(0L));
+		assertThat(authorService.count(), equalTo(2L));
 		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-		assertThat(list.size(), equalTo(2));
-		assertThat(list, equalTo(Arrays.asList("1", "2")));
+		assertThat(authorService.countShops(), equalTo(4L));
+		assertThat(list.size(), equalTo(3));
+		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
 	}
 
 	@Test
@@ -243,7 +243,7 @@ public class MultipleTransactionWithoutCatchITCase extends
 		final String[] group3 = { "A3", "B3", "C3", "TOO_LONG_TO_FIT" };
 		final List<String> list = new ArrayList<>();
 		try {
-			authorService.insertNestedInsideTransactionWithoutCatch(group1,
+			authorService.insertNestedInsideTransactionWithCatch(group1,
 					group2, group3, list);
 		} catch (final Exception e) {
 			e.printStackTrace();
