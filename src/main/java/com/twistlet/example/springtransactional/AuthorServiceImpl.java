@@ -92,7 +92,12 @@ public class AuthorServiceImpl implements AuthorService {
 
 	{
 		insertMultipleAuthor(group1);
-		bookService.insertRequired(group2);
+		try {
+			bookService.insertRequired(group2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		insertMultipleShop(group3);
 
 	}
@@ -102,7 +107,11 @@ public class AuthorServiceImpl implements AuthorService {
 	public void insertRequiresNewInsideTransaction(final String[] group1,
 			final String[] group2, final String[] group3) {
 		insertMultipleAuthor(group1);
-		bookService.insertRequiresNew(group2);
+		try {
+			bookService.insertRequiresNew(group2);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 		insertMultipleShop(group3);
 
 	}
@@ -112,7 +121,11 @@ public class AuthorServiceImpl implements AuthorService {
 	public void insertNestedInsideTransaction(final String[] group1,
 			final String[] group2, final String[] group3) {
 		insertMultipleAuthor(group1);
-		bookService.insertNested(group2);
+		try {
+			bookService.insertNested(group2);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 		insertMultipleShop(group3);
 	}
 

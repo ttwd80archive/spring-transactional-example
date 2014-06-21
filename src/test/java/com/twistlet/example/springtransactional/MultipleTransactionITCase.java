@@ -128,9 +128,9 @@ public class MultipleTransactionITCase extends AbstractJUnit4SpringContextTests 
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		assertThat(authorService.count(), equalTo(0L));
+		assertThat(authorService.count(), equalTo(2L));
 		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
+		assertThat(authorService.countShops(), equalTo(4L));
 	}
 
 	@Test
@@ -190,9 +190,9 @@ public class MultipleTransactionITCase extends AbstractJUnit4SpringContextTests 
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		assertThat(authorService.count(), equalTo(0L));
+		assertThat(authorService.count(), equalTo(2L));
 		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
+		assertThat(authorService.countShops(), equalTo(4L));
 	}
 
 	@Test
