@@ -13,7 +13,6 @@ import org.junit.Test;
  */
 public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 
-
 	// TransactionDefinition
 	// PROPAGATION_REQUIRED
 	// PROPAGATION_SUPPORTS
@@ -35,6 +34,13 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 	}
 
 	@Test
+	public void testRequiredFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_REQUIRED,
+				SINGLE_VALUE_FAIL_ON_MIDDLE);
+		assertThat(simpleService.table1Count(), equalTo(4L));
+	}
+
+	@Test
 	public void testSupportsGoodData() {
 		insertMultiple(PROPAGATION_SUPPORTS, SINGLE_VALUE_GOOD_DATA);
 		assertThat(simpleService.table1Count(), equalTo(5L));
@@ -43,6 +49,13 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 	@Test
 	public void testSupportsFailOnLast() {
 		insertMultiple(PROPAGATION_SUPPORTS, SINGLE_VALUE_FAIL_ON_LAST);
+		assertThat(simpleService.table1Count(), equalTo(4L));
+	}
+
+	@Test
+	public void testSupportsFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_SUPPORTS,
+				SINGLE_VALUE_FAIL_ON_MIDDLE);
 		assertThat(simpleService.table1Count(), equalTo(4L));
 	}
 
@@ -59,6 +72,13 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 	}
 
 	@Test
+	public void testMandatoryFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_MANDATORY,
+				SINGLE_VALUE_FAIL_ON_MIDDLE);
+		assertThat(simpleService.table1Count(), equalTo(0L));
+	}
+
+	@Test
 	public void testRequiresNewGoodData() {
 		insertMultiple(PROPAGATION_REQUIRES_NEW, SINGLE_VALUE_GOOD_DATA);
 		assertThat(simpleService.table1Count(), equalTo(5L));
@@ -71,6 +91,13 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 	}
 
 	@Test
+	public void testRequiresNewFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_REQUIRES_NEW,
+				SINGLE_VALUE_FAIL_ON_MIDDLE);
+		assertThat(simpleService.table1Count(), equalTo(4L));
+	}
+
+	@Test
 	public void testNotSupportedGoodData() {
 		insertMultiple(PROPAGATION_NOT_SUPPORTED, SINGLE_VALUE_GOOD_DATA);
 		assertThat(simpleService.table1Count(), equalTo(5L));
@@ -79,6 +106,13 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 	@Test
 	public void testNotSupportedFailOnLast() {
 		insertMultiple(PROPAGATION_NOT_SUPPORTED, SINGLE_VALUE_FAIL_ON_LAST);
+		assertThat(simpleService.table1Count(), equalTo(4L));
+	}
+
+	@Test
+	public void testNotSupportedFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_NOT_SUPPORTED,
+				SINGLE_VALUE_FAIL_ON_MIDDLE);
 		assertThat(simpleService.table1Count(), equalTo(4L));
 	}
 
@@ -95,6 +129,12 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 	}
 
 	@Test
+	public void testNeverFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_NEVER, SINGLE_VALUE_FAIL_ON_MIDDLE);
+		assertThat(simpleService.table1Count(), equalTo(4L));
+	}
+
+	@Test
 	public void testNestedGoodData() {
 		insertMultiple(PROPAGATION_NESTED, SINGLE_VALUE_GOOD_DATA);
 		assertThat(simpleService.table1Count(), equalTo(5L));
@@ -106,9 +146,24 @@ public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 		assertThat(simpleService.table1Count(), equalTo(0L));
 	}
 
+	@Test
+	public void testNestedFailOnMiddle() {
+		insertMultipleWithCatch(PROPAGATION_NEVER, SINGLE_VALUE_FAIL_ON_MIDDLE);
+		assertThat(simpleService.table1Count(), equalTo(4L));
+	}
+
 	private void insertMultiple(final int propagation, final String[] values) {
 		try {
 			simpleService.insertMultipleOneLayer(propagation, values);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void insertMultipleWithCatch(final int propagation,
+			final String[] values) {
+		try {
+			simpleService.insertMultipleWithCatchOneLayer(propagation, values);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

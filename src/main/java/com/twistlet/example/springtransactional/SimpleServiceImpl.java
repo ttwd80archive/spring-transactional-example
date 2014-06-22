@@ -219,6 +219,31 @@ public class SimpleServiceImpl implements SimpleService {
 		}
 	}
 
+	private class TransactionCallbackInsertWithCatch implements
+			TransactionCallback<Object> {
+
+		private final TableDao tableDao;
+		private final String[] values;
+
+		public TransactionCallbackInsertWithCatch(final TableDao tableDao,
+				final String[] values) {
+			this.tableDao = tableDao;
+			this.values = values;
+		}
+
+		@Override
+		public Object doInTransaction(final TransactionStatus status) {
+			for (final String value : values) {
+				try {
+					tableDao.insert(value);
+				} catch (final Exception e) {
+					e.toString();
+				}
+			}
+			return null;
+		}
+	}
+
 	private TransactionTemplate create(final int propagationBehavior) {
 		final TransactionTemplate transactionTemplate = new TransactionTemplate();
 		transactionTemplate.setTransactionManager(transactionManager);
@@ -231,6 +256,15 @@ public class SimpleServiceImpl implements SimpleService {
 		clear(table1Dao);
 		clear(table2Dao);
 		clear(table3Dao);
+	}
+
+	@Override
+	public void insertMultipleWithCatchOneLayer(final int propagationBehavior,
+			final String[] values) {
+		final TransactionTemplate transactionTemplate = create(propagationBehavior);
+		final TransactionCallbackInsertWithCatch callback = new TransactionCallbackInsertWithCatch(
+				table1Dao, values);
+		transactionTemplate.execute(callback);
 	}
 
 }

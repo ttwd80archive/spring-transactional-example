@@ -21,6 +21,8 @@ public abstract class AbstractSpringTransactionalITCase extends
 	protected final String[] SINGLE_VALUE_GOOD_DATA = { "A", "B", "C", "D", "E" };
 	protected final String[] SINGLE_VALUE_FAIL_ON_LAST = { "A", "B", "C", "D",
 			"EGGPLANT" };
+	protected final String[] SINGLE_VALUE_FAIL_ON_MIDDLE = { "A", "BANANA",
+			"C", "D", "E" };
 
 	protected final String[][] MULTIPLE_ALL_VALID = { T1_VALID, T2_VALID,
 			T3_VALID };

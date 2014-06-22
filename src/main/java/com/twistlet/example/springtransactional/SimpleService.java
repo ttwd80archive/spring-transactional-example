@@ -21,4 +21,6 @@ public interface SimpleService {
 	void insertMultipleTwoLayerWithCatch(int propagationBehavior,
 			String[] strings, String[] strings2, String[] strings3,
 			List<String> attempt);
+
+	void insertMultipleWithCatchOneLayer(int propagation, String[] values);
 }
