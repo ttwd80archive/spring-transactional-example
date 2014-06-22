@@ -1,3 +1,3 @@
-create table book(title varchar(10));
-create table author(name varchar(10));
-create table shop(name varchar(10));
+create table table1(value varchar(5));
+create table table2(value varchar(5));
+create table table3(value varchar(5));
