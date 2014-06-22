@@ -4,26 +4,15 @@ import static org.hamcrest.core.IsEqual.*;
 import static org.junit.Assert.*;
 import static org.springframework.transaction.TransactionDefinition.*;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration("classpath:application-context.xml")
-public class MajorGroupITCase extends AbstractJUnit4SpringContextTests {
+/**
+ * 
+ * @author Titi Wangsa
+ *
+ */
+public class MajorGroupITCase extends AbstractSpringTransactionalITCase {
 
-	@Autowired
-	SimpleService simpleService;
-
-	private final String[] SINGLE_VALUE_GOOD_DATA = { "A", "B", "C", "D", "E" };
-	private final String[] SINGLE_VALUE_FAIL_ON_LAST = { "A", "B", "C", "D",
-			"EGGPLANT" };
-
-	@Before
-	public void init() {
-		simpleService.clear();
-	}
 
 	// TransactionDefinition
 	// PROPAGATION_REQUIRED
