@@ -1,12 +1,15 @@
 package com.twistlet.example.springtransactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration("classpath:application-context.xml")
-public class AbstractSpringTransactionalITCase extends
+public abstract class AbstractSpringTransactionalITCase extends
 		AbstractJUnit4SpringContextTests {
 	protected final String[] T1_VALID = { "A1", "B1" };
 	protected final String[] T1_INVALID = { "A1", "INVALID" };
@@ -31,9 +34,13 @@ public class AbstractSpringTransactionalITCase extends
 	@Autowired
 	protected SimpleService simpleService;
 
+	protected List<String> attempt;
+
 	@Before
 	public void init() {
 		simpleService.clear();
+		attempt = new ArrayList<>();
+
 	}
 
 }

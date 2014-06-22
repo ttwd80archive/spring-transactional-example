@@ -13,12 +13,12 @@ import org.junit.Test;
  * @author Titi Wangsa
  *
  */
-public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
+public abstract class AbstractTransactionDependentITCase extends
 		AbstractSpringTransactionalITCase {
 
 	@Test
-	public void testRequiredAllValid() {
-		insert(PROPAGATION_REQUIRED, MULTIPLE_ALL_VALID);
+	public void testSupportsAllValid() {
+		insert(PROPAGATION_SUPPORTS, MULTIPLE_ALL_VALID);
 		assertThat(attempt.size(), equalTo(3));
 		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
 		assertThat(simpleService.table1Count(), equalTo(2L));
@@ -28,8 +28,8 @@ public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
 	}
 
 	@Test
-	public void testRequiresNewAllValid() {
-		insert(PROPAGATION_REQUIRES_NEW, MULTIPLE_ALL_VALID);
+	public void testNotSupportedAllValid() {
+		insert(PROPAGATION_NOT_SUPPORTED, MULTIPLE_ALL_VALID);
 		assertThat(attempt.size(), equalTo(3));
 		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
 		assertThat(simpleService.table1Count(), equalTo(2L));
@@ -38,19 +38,11 @@ public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
 
 	}
 
-	@Test
-	public void testNestedAllValid() {
-		insert(PROPAGATION_NESTED, MULTIPLE_ALL_VALID);
-		assertThat(attempt.size(), equalTo(3));
-		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(simpleService.table1Count(), equalTo(2L));
-		assertThat(simpleService.table2Count(), equalTo(3L));
-		assertThat(simpleService.table3Count(), equalTo(4L));
-	}
+	public abstract void testNeverAllValid();
 
 	@Test
-	public void testRequiredInvalid1() {
-		insert(PROPAGATION_REQUIRED, MULTIPLE_T1_INVALID);
+	public void testSupportsInvalid1() {
+		insert(PROPAGATION_SUPPORTS, MULTIPLE_T1_INVALID);
 		assertThat(attempt, equalTo(Arrays.asList("1")));
 		assertThat(simpleService.table1Count(), equalTo(0L));
 		assertThat(simpleService.table2Count(), equalTo(0L));
@@ -59,8 +51,8 @@ public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
 	}
 
 	@Test
-	public void testRequiresNewInvalid1() {
-		insert(PROPAGATION_REQUIRES_NEW, MULTIPLE_T1_INVALID);
+	public void testNotSupportedInvalid1() {
+		insert(PROPAGATION_NOT_SUPPORTED, MULTIPLE_T1_INVALID);
 		assertThat(attempt, equalTo(Arrays.asList("1")));
 		assertThat(simpleService.table1Count(), equalTo(0L));
 		assertThat(simpleService.table2Count(), equalTo(0L));
@@ -69,23 +61,23 @@ public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
 	}
 
 	@Test
-	public void testNestedInvalid1() {
-		insert(PROPAGATION_NESTED, MULTIPLE_T1_INVALID);
+	public void testNeverInvalid1() {
+		insert(PROPAGATION_NEVER, MULTIPLE_T1_INVALID);
 		assertThat(attempt, equalTo(Arrays.asList("1")));
 		assertThat(simpleService.table1Count(), equalTo(0L));
 		assertThat(simpleService.table2Count(), equalTo(0L));
 		assertThat(simpleService.table3Count(), equalTo(0L));
 	}
 
-	public abstract void testRequiredInvalid2();
+	public abstract void testSupportsInvalid2();
 
-	public abstract void testRequiresNewInvalid2();
+	public abstract void testNotSupportedInvalid2();
 
-	public abstract void testNestedInvalid2();
+	public abstract void testNeverInvalid2();
 
 	@Test
-	public void testRequiredInvalid3() {
-		insert(PROPAGATION_REQUIRED, MULTIPLE_T3_INVALID);
+	public void testSupportsInvalid3() {
+		insert(PROPAGATION_SUPPORTS, MULTIPLE_T3_INVALID);
 		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
 		assertThat(simpleService.table1Count(), equalTo(0L));
 		assertThat(simpleService.table2Count(), equalTo(0L));
@@ -93,12 +85,9 @@ public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
 
 	}
 
-	/**
-	 * 
-	 */
 	@Test
-	public void testRequiresNewInvalid3() {
-		insert(PROPAGATION_REQUIRES_NEW, MULTIPLE_T3_INVALID);
+	public void testNotSupportedInvalid3() {
+		insert(PROPAGATION_NOT_SUPPORTED, MULTIPLE_T3_INVALID);
 		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
 		assertThat(simpleService.table1Count(), equalTo(0L));
 		assertThat(simpleService.table2Count(), equalTo(3L));
@@ -106,14 +95,7 @@ public abstract class AbstractPropagationStartsNewTransactionGroupITCase extends
 
 	}
 
-	@Test
-	public void testNestedInvalid3() {
-		insert(PROPAGATION_NESTED, MULTIPLE_T3_INVALID);
-		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(simpleService.table1Count(), equalTo(0L));
-		assertThat(simpleService.table2Count(), equalTo(0L));
-		assertThat(simpleService.table3Count(), equalTo(0L));
-	}
+	public abstract void testNeverInvalid3();
 
 	protected abstract void insert(final int propagationBehavior,
 			final String[][] values);

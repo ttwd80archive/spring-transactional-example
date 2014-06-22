@@ -2,256 +2,75 @@ package com.twistlet.example.springtransactional;
 
 import static org.hamcrest.core.IsEqual.*;
 import static org.junit.Assert.*;
+import static org.springframework.transaction.TransactionDefinition.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration("classpath:application-context.xml")
 public class TransactionDependentWithCatchITCase extends
-		AbstractJUnit4SpringContextTests {
-	@Resource
-	AuthorService authorService;
-
-	@Before
-	public void init() {
-		authorService.clean();
+		AbstractTransactionDependentITCase {
+	@Override
+	@Test
+	public void testNeverAllValid() {
+		insert(PROPAGATION_NEVER, MULTIPLE_ALL_VALID);
+		assertThat(attempt.size(), equalTo(3));
+		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
+		assertThat(simpleService.table1Count(), equalTo(2L));
+		assertThat(simpleService.table2Count(), equalTo(0L));
+		assertThat(simpleService.table3Count(), equalTo(4L));
 	}
 
+	@Override
 	@Test
-	public void testSupportsInsideTransactionOk() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
+	public void testSupportsInvalid2() {
+		insert(PROPAGATION_SUPPORTS, MULTIPLE_T2_INVALID);
+		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
+		assertThat(simpleService.table1Count(), equalTo(0L));
+		assertThat(simpleService.table2Count(), equalTo(0L));
+		assertThat(simpleService.table3Count(), equalTo(0L));
+
+	}
+
+	@Override
+	@Test
+	public void testNotSupportedInvalid2() {
+		insert(PROPAGATION_NOT_SUPPORTED, MULTIPLE_T2_INVALID);
+		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
+		assertThat(simpleService.table1Count(), equalTo(2L));
+		assertThat(simpleService.table2Count(), equalTo(2L));
+		assertThat(simpleService.table3Count(), equalTo(4L));
+
+	}
+
+	@Override
+	@Test
+	public void testNeverInvalid2() {
+		insert(PROPAGATION_NEVER, MULTIPLE_T2_INVALID);
+		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
+		assertThat(simpleService.table1Count(), equalTo(2L));
+		assertThat(simpleService.table2Count(), equalTo(0L));
+		assertThat(simpleService.table3Count(), equalTo(4L));
+	}
+
+	@Override
+	@Test
+	public void testNeverInvalid3() {
+		insert(PROPAGATION_NEVER, MULTIPLE_T3_INVALID);
+		assertThat(attempt, equalTo(Arrays.asList("1", "2", "3")));
+		assertThat(simpleService.table1Count(), equalTo(0L));
+		assertThat(simpleService.table2Count(), equalTo(0L));
+		assertThat(simpleService.table3Count(), equalTo(0L));
+	}
+
+	@Override
+	protected void insert(final int propagationBehavior, final String[][] values) {
 		try {
-			authorService.insertSupportsInsideTransactionWithCatch(group1,
-					group2, group3, list);
+			simpleService.insertMultipleTwoLayerWithCatch(propagationBehavior,
+					values[0], values[1], values[2], attempt);
 		} catch (final Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(2L));
-		assertThat(authorService.countBooks(), equalTo(3L));
-		assertThat(authorService.countShops(), equalTo(4L));
 	}
-
-	@Test
-	public void testSupportsInsideTransactionNotOk1() {
-		final String[] group1 = { "A1", "TOO_LONG_TO_FIT" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertSupportsInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(1));
-		assertThat(list, equalTo(Arrays.asList("1")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
-	@Test
-	public void testSupportsInsideTransactionNotOk2() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "TOO_LONG_TO_FIT" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertSupportsInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
-	@Test
-	public void testSupportsInsideTransactionNotOk3() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "TOO_LONG_TO_FIT" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertSupportsInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
-	@Test
-	public void testNotSupportedInsideTransactionOk() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNotSupportedInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(2L));
-		assertThat(authorService.countBooks(), equalTo(3L));
-		assertThat(authorService.countShops(), equalTo(4L));
-	}
-
-	@Test
-	public void testNotSupportedInsideTransactionNotOk1() {
-		final String[] group1 = { "A1", "TOO_LONG_TO_FIT" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNotSupportedInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(1));
-		assertThat(list, equalTo(Arrays.asList("1")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
-	@Test
-	public void testNotSupportedInsideTransactionNotOk2() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "TOO_LONG_TO_FIT" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNotSupportedInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(2L));
-		assertThat(authorService.countBooks(), equalTo(2L));
-		assertThat(authorService.countShops(), equalTo(4L));
-	}
-
-	@Test
-	public void testNotSupportedInsideTransactionNotOk3() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "TOO_LONG_TO_FIT" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNotSupportedInsideTransactionWithCatch(group1,
-					group2, group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(3L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
-	/* Nested */
-	@Test
-	public void testNeverInsideTransactionOk() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNeverInsideTransactionWithCatch(group1, group2,
-					group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(2L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(4L));
-	}
-
-	@Test
-	public void testNeverInsideTransactionNotOk1() {
-		final String[] group1 = { "A1", "TOO_LONG_TO_FIT" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNeverInsideTransactionWithCatch(group1, group2,
-					group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(1));
-		assertThat(list, equalTo(Arrays.asList("1")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
-	@Test
-	public void testNeverInsideTransactionNotOk2() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "TOO_LONG_TO_FIT" };
-		final String[] group3 = { "A3", "B3", "C3", "D4" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNeverInsideTransactionWithCatch(group1, group2,
-					group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(2L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(4L));
-	}
-
-	@Test
-	public void testNeverInsideTransactionNotOk3() {
-		final String[] group1 = { "A1", "B1" };
-		final String[] group2 = { "A2", "B2", "C2" };
-		final String[] group3 = { "A3", "B3", "C3", "TOO_LONG_TO_FIT" };
-		final List<String> list = new ArrayList<>();
-		try {
-			authorService.insertNeverInsideTransactionWithCatch(group1, group2,
-					group3, list);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		assertThat(list.size(), equalTo(3));
-		assertThat(list, equalTo(Arrays.asList("1", "2", "3")));
-		assertThat(authorService.count(), equalTo(0L));
-		assertThat(authorService.countBooks(), equalTo(0L));
-		assertThat(authorService.countShops(), equalTo(0L));
-	}
-
 }
